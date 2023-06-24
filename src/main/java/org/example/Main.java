@@ -1,8 +1,12 @@
 package org.example;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Main {
@@ -85,7 +89,8 @@ public class Main {
 
     /**
      * Поиск осознанного слова
-     * @param file имя файла для поиска
+     *
+     * @param file   имя файла для поиска
      * @param search искомое слово
      * @return результат ответа
      * @throws IOException
@@ -95,12 +100,12 @@ public class Main {
             byte[] searchData = search.getBytes();
             int c;
             int i = 0;
-            while ((c = fileInputStream.read()) != -1){
+            while ((c = fileInputStream.read()) != -1) {
                 if (c == searchData[i]) {
                     i++;
                 } else {
                     i = 0;
-                    if (c == searchData[i]){
+                    if (c == searchData[i]) {
                         i++;
                     }
                 }
@@ -112,12 +117,46 @@ public class Main {
         }
     }
 
+    private static List<String> searchMath(String[] files, String search) throws IOException {
+        List<String> list = new ArrayList<>();
+        File path = new File(new File(".").getCanonicalPath());
+        File[] dir = path.listFiles();
+        for (int i = 0; i < dir.length; i++) {
+            if (dir[i].isDirectory()) {
+                continue;
+            } else {
+                for (int j = 0; j < files.length; j++) {
+                    if (dir[i].getName().equals(files[j])) {
+                        if (searchInFile(dir[i].getName(), search)) {
+                            list.add(dir[i].getName());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
     public static void main(String[] args) throws IOException {
         writeFileContents("simple.txt", 34, 6);
-        System.out.println(searchInFile("simple.txt",TO_SEARCH));
+        System.out.println(searchInFile("simple.txt", TO_SEARCH));
         writeFileContents("simple2.txt", 34, 6);
-        System.out.println(searchInFile("simple2.txt",TO_SEARCH));
+        System.out.println(searchInFile("simple2.txt", TO_SEARCH));
         concatenate("simple.txt", "simple2.txt", "simple2_new.txt");
-        System.out.println(searchInFile("simple2_new.txt",TO_SEARCH));
+        System.out.println(searchInFile("simple2_new.txt", TO_SEARCH));
+//        PrintDir.printDir(new File("."),"",true);
+        PrintDir.printFiles(new File("."), "", true);
+
+        String[] filesName = new String[10];
+        for (int i = 0; i < filesName.length; i++) {
+            filesName[i] = "file_" + (i + 1) + ".txt";
+            writeFileContents(filesName[i], 100, 5);
+            System.out.printf("Файл %s создан \n", filesName[i]);
+        }
+        List<String> result = searchMath(filesName, TO_SEARCH);
+        for (String s : result) {
+            System.out.printf("Файл %s содержит искомое слово'%s'\n", s, TO_SEARCH);
+        }
     }
 }
