@@ -117,6 +117,13 @@ public class Main {
         }
     }
 
+    /**
+     * Поиск искомого слова в массиве файлов
+     * @param files файл
+     * @param search искомое слово
+     * @return
+     * @throws IOException
+     */
     private static List<String> searchMath(String[] files, String search) throws IOException {
         List<String> list = new ArrayList<>();
         File path = new File(new File(".").getCanonicalPath());
