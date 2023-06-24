@@ -5,6 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -145,6 +149,22 @@ public class Main {
         return list;
     }
 
+    /**
+     * Функция, создающая резервную копию всех файлов в директории(без поддиректорий) во вновь созданную папку ./backup
+     * @param sourceDirectory путь к директории из которой копировать файлы
+     * @throws IOException
+     */
+    public static void backupDirectory(String sourceDirectory) throws IOException {
+        Path path = Paths.get("./backup"); // Создание папки для резервной копии
+        Files.createDirectories(path);
+        DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(sourceDirectory)); // Получение списка файлов в директории
+        for (Path pathFile : directoryStream){
+            if (Files.isRegularFile(pathFile)){
+                Files.copy(pathFile,path.resolve(pathFile.getFileName())); // Если это файл, то копируем его в папку для резервной копии
+            }
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         writeFileContents("simple.txt", 34, 6);
         System.out.println(searchInFile("simple.txt", TO_SEARCH));
@@ -165,5 +185,8 @@ public class Main {
         for (String s : result) {
             System.out.printf("Файл %s содержит искомое слово'%s'\n", s, TO_SEARCH);
         }
+
+        backupDirectory("/Users/mitya.kulikbk.ru/Desktop/FileWriteRideAndSearch/");
+
     }
 }
